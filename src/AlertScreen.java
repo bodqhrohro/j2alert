@@ -31,7 +31,13 @@ public class AlertScreen extends Form implements CommandListener {
 				}
 
 				ChoiceGroup cg = new ChoiceGroup(label, ChoiceGroup.POPUP);
-				cg.append("Ніякий", null);
+				if (i == 3) {
+					cg.append("Ніяке", null);
+				} else if (i == 1) {
+					cg.append("Ніякий", null);
+				} else {
+					cg.append("Ніяка", null);
+				}
 
 				for (int j = 0; j < result[i].size(); j+=2) {
 					cg.append((String)result[i].elementAt(j), null);
