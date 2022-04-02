@@ -11,6 +11,7 @@ public class AlertScreen extends Form implements CommandListener {
 		api = new UkrZenApi();
 		api.update();
 		try {
+			api.fetchRegions();
 			Vector[] result = api.getRegions();
 
 			for (int i = 0; i < 4; i++) {
@@ -39,7 +40,7 @@ public class AlertScreen extends Form implements CommandListener {
 					cg.append("Ніяка", null);
 				}
 
-				for (int j = 0; j < result[i].size(); j+=2) {
+				for (int j = 0; j < result[i].size(); j++) {
 					cg.append((String)result[i].elementAt(j), null);
 				}
 

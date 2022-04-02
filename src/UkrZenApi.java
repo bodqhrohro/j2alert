@@ -11,6 +11,11 @@ public class UkrZenApi {
 	private Vector oblasts;
 	private Vector raions;
 
+	private Vector cityIds;
+	private Vector hromadaIds;
+	private Vector oblastIds;
+	private Vector raionIds;
+
 	UkrZenApi() {
 		readConfig();
 	}
@@ -18,7 +23,7 @@ public class UkrZenApi {
 	private void readConfig() {
 	}
 
-	public Vector[] getRegions() throws IOException {
+	public void fetchRegions() throws IOException {
 		try {
 			String res = fetchString(LOCATIONS_URI, 16348);
 
@@ -27,12 +32,17 @@ public class UkrZenApi {
 			oblasts = new Vector();
 			raions = new Vector();
 
+			cityIds = new Vector();
+			hromadaIds = new Vector();
+			oblastIds = new Vector();
+			raionIds = new Vector();
+
 			int beginQuoteI = 1;
 			int endQuoteI = 1;
 			int state = 0; // 0: title => 1: "title" => 2: type => 3: "type" => 0: ...
 			String lastRegion = "";
 
-			for (int i = 0; i < 800; i++) {
+			for (int i = 0; i < 10000; i++) { // a sane limit to prevent an endless loop
 				beginQuoteI = res.indexOf('"', endQuoteI+1);
 				endQuoteI = res.indexOf('"', beginQuoteI+1);
 				if (beginQuoteI == -1 || endQuoteI == -1) {
@@ -46,16 +56,16 @@ public class UkrZenApi {
 					String type = res.substring(beginQuoteI+1, endQuoteI);
 					if (type.equals("city")) {
 						cities.addElement(lastRegion);
-						cities.addElement(no);
+						cityIds.addElement(no);
 					} else if (type.equals("hromada")) {
 						hromadas.addElement(lastRegion);
-						hromadas.addElement(no);
+						hromadaIds.addElement(no);
 					} else if (type.equals("oblast")) {
 						oblasts.addElement(lastRegion);
-						oblasts.addElement(no);
+						oblastIds.addElement(no);
 					} else if (type.equals("raion")) {
 						raions.addElement(lastRegion);
-						raions.addElement(no);
+						raionIds.addElement(no);
 					}
 				}
 
@@ -64,12 +74,17 @@ public class UkrZenApi {
 					state = 0;
 				}
 			}
-
-			Vector[] regions = {oblasts, raions, hromadas, cities};
-			return regions;
 		} catch (IOException e) {
 			throw e;
 		}
+	}
+
+	public Vector[] getRegions() {
+		Vector[] regions = {
+			oblasts, raions, hromadas, cities,
+			oblastIds, raionIds, hromadaIds, cityIds
+		};
+		return regions;
 	}
 
 	private String fetchString(String uri, int bufSize) throws IOException {
