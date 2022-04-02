@@ -76,7 +76,7 @@ public class UkrZenApi {
 		try {
 			HttpConnection hc = (HttpConnection)Connector.open(uri);
 			InputStream is = hc.openInputStream();
-			Reader r = new InputStreamReader(is);
+			Reader r = new InputStreamReader(is, "UTF-8");
 
 			StringBuffer sbuf = new StringBuffer(bufSize);
 			char[] buf = new char[128];
