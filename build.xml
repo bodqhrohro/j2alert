@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<project default="build" basedir=".">
+	<taskdef resource="proguard/ant/task.properties" classpath="/usr/share/java/proguard.jar"/>
+	<property name="name" value="j2alert"/>
+	<property name="src.dir" location="${basedir}/src"/>
+	<property name="build" location="${basedir}/bin"/>
+	<property name="build.classes" location="${basedir}/build"/>
+	<path id="libs.dir">
+		<fileset dir="${basedir}/lib" includes="cldc_1.1.jar"/>
+		<fileset dir="${basedir}/lib" includes="midp_2.0.jar"/>
+	</path>
+	<target name="build" depends="clean">
+		<mkdir dir="${build.classes}"/>
+		<javac executable="/Programs/elf/j2sdk1.4.2_19/bin/javac" fork="yes" includeantruntime="false" srcdir="${src.dir}" destdir="${build.classes}" debug="false" deprecation="true" optimize="true" target="1.1" source="1.3">
+			<classpath refid="libs.dir"/>
+		</javac>
+
+		<mkdir dir="${build.classes}/META-INF"/>
+		<copy todir="${build.classes}/META-INF">
+			<fileset dir="${basedir}" includes="MANIFEST.MF"/>
+		</copy>
+
+		<zip destfile="${build}/${name}-nonpreverified.jar" basedir="${build.classes}"/>
+		<proguard>
+			-injars ${build}/${name}-nonpreverified.jar
+			-libraryjars /Programs/portable/WTK2.5.2/lib/cldcapi11.jar
+			-libraryjars /Programs/portable/WTK2.5.2/lib/midpapi20.jar
+			-dontshrink
+			-dontoptimize
+			-dontobfuscate
+			-microedition
+			-outjars ${build}/${name}.jar
+		</proguard>
+	</target>
+	<target name="clean">
+		<delete dir="${build.classes}"/>
+	</target>
+</project>
