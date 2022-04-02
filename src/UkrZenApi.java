@@ -5,6 +5,7 @@ import java.util.Vector;
 public class UkrZenApi {
 	private static final String LOCATIONS_URI = "http://nedoschechko.undo.it:11113/locations.json";
 	private static final String ACTIVE_URI = "http://nedoschechko.undo.it:11113/active.mp";
+	private static final int LIMIT = 128;
 
 	private Vector cities;
 	private Vector hromadas;
@@ -25,7 +26,9 @@ public class UkrZenApi {
 
 	public void fetchRegions() throws IOException {
 		try {
-			String res = fetchString(LOCATIONS_URI, 16348);
+			HttpConnection hc = (HttpConnection)Connector.open(LOCATIONS_URI);
+			InputStream is = hc.openInputStream();
+			Reader r = new InputStreamReader(is, "UTF-8");
 
 			cities = new Vector();
 			hromadas = new Vector();
@@ -37,41 +40,57 @@ public class UkrZenApi {
 			oblastIds = new Vector();
 			raionIds = new Vector();
 
-			int beginQuoteI = 1;
-			int endQuoteI = 1;
+			boolean inString = false;
 			int state = 0; // 0: title => 1: "title" => 2: type => 3: "type" => 0: ...
-			String lastRegion = "";
+			StringBuffer lastRegion = new StringBuffer(LIMIT);
+			StringBuffer type = new StringBuffer(LIMIT);
+			int idx = 0;
 
-			for (int i = 0; i < 10000; i++) { // a sane limit to prevent an endless loop
-				beginQuoteI = res.indexOf('"', endQuoteI+1);
-				endQuoteI = res.indexOf('"', beginQuoteI+1);
-				if (beginQuoteI == -1 || endQuoteI == -1) {
-					break;
-				}
+			char[] buf = new char[LIMIT];
+			int read;
+			while ((read = r.read(buf, 0, buf.length)) != -1) {
+				for (int i = 0; i < read; i++) {
+					if (buf[i] == '"') {
+						if (inString) {
+							if (state == 3) {
+								Integer no = new Integer(idx);
+								String strLastRegion = lastRegion.toString();
+								String strType = type.toString();
+								if (strType.equals("city")) {
+									cities.addElement(strLastRegion);
+									cityIds.addElement(no);
+								} else if (strType.equals("hromada")) {
+									hromadas.addElement(strLastRegion);
+									hromadaIds.addElement(no);
+								} else if (strType.equals("oblast")) {
+									oblasts.addElement(strLastRegion);
+									oblastIds.addElement(no);
+								} else if (strType.equals("raion")) {
+									raions.addElement(strLastRegion);
+									raionIds.addElement(no);
+								}
 
-				if (state == 1) {
-					lastRegion = res.substring(beginQuoteI+1, endQuoteI);
-				} else if (state == 3) {
-					Integer no = new Integer(i/4);
-					String type = res.substring(beginQuoteI+1, endQuoteI);
-					if (type.equals("city")) {
-						cities.addElement(lastRegion);
-						cityIds.addElement(no);
-					} else if (type.equals("hromada")) {
-						hromadas.addElement(lastRegion);
-						hromadaIds.addElement(no);
-					} else if (type.equals("oblast")) {
-						oblasts.addElement(lastRegion);
-						oblastIds.addElement(no);
-					} else if (type.equals("raion")) {
-						raions.addElement(lastRegion);
-						raionIds.addElement(no);
+								lastRegion = new StringBuffer(LIMIT);
+								type = new StringBuffer(LIMIT);
+								idx++;
+								state = 0;
+							} else {
+								state++;
+							}
+
+							inString = false;
+						} else {
+							inString = true;
+						}
+					} else {
+						if (inString) {
+							if (state == 1) {
+								lastRegion.append(buf[i]);
+							} else if (state == 3) {
+								type.append(buf[i]);
+							}
+						}
 					}
-				}
-
-				state++;
-				if (state >= 4) {
-					state = 0;
 				}
 			}
 		} catch (IOException e) {
@@ -85,24 +104,6 @@ public class UkrZenApi {
 			oblastIds, raionIds, hromadaIds, cityIds
 		};
 		return regions;
-	}
-
-	private String fetchString(String uri, int bufSize) throws IOException {
-		try {
-			HttpConnection hc = (HttpConnection)Connector.open(uri);
-			InputStream is = hc.openInputStream();
-			Reader r = new InputStreamReader(is, "UTF-8");
-
-			StringBuffer sbuf = new StringBuffer(bufSize);
-			char[] buf = new char[128];
-			int read;
-			while ((read = r.read(buf, 0, buf.length)) != -1) {
-				sbuf.append(buf, 0, read);
-			}
-			return sbuf.toString();
-		} catch (IOException e) {
-			throw e;
-		}
 	}
 
 	public void update() {
