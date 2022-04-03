@@ -43,52 +43,49 @@ public class UkrZenApi {
 			boolean inString = false;
 			int state = 0; // 0: title => 1: "title" => 2: type => 3: "type" => 0: ...
 			StringBuffer lastRegion = new StringBuffer(LIMIT);
-			StringBuffer type = new StringBuffer(LIMIT);
+			StringBuffer type = new StringBuffer();
 			int idx = 0;
 
-			char[] buf = new char[LIMIT];
 			int read;
-			while ((read = r.read(buf, 0, buf.length)) != -1) {
-				for (int i = 0; i < read; i++) {
-					if (buf[i] == '"') {
-						if (inString) {
-							if (state == 3) {
-								Integer no = new Integer(idx);
-								String strLastRegion = lastRegion.toString();
-								String strType = type.toString();
-								if (strType.equals("city")) {
-									cities.addElement(strLastRegion);
-									cityIds.addElement(no);
-								} else if (strType.equals("hromada")) {
-									hromadas.addElement(strLastRegion);
-									hromadaIds.addElement(no);
-								} else if (strType.equals("oblast")) {
-									oblasts.addElement(strLastRegion);
-									oblastIds.addElement(no);
-								} else if (strType.equals("raion")) {
-									raions.addElement(strLastRegion);
-									raionIds.addElement(no);
-								}
-
-								lastRegion = new StringBuffer(LIMIT);
-								type = new StringBuffer(LIMIT);
-								idx++;
-								state = 0;
-							} else {
-								state++;
+			while ((read = r.read()) != -1) {
+				if (read == 0x22) {
+					if (inString) {
+						if (state == 3) {
+							Integer no = new Integer(idx);
+							String strLastRegion = lastRegion.toString();
+							String strType = type.toString();
+							if (strType.equals("city")) {
+								cities.addElement(strLastRegion);
+								cityIds.addElement(no);
+							} else if (strType.equals("hromada")) {
+								hromadas.addElement(strLastRegion);
+								hromadaIds.addElement(no);
+							} else if (strType.equals("oblast")) {
+								oblasts.addElement(strLastRegion);
+								oblastIds.addElement(no);
+							} else if (strType.equals("raion")) {
+								raions.addElement(strLastRegion);
+								raionIds.addElement(no);
 							}
 
-							inString = false;
+							lastRegion = new StringBuffer(LIMIT);
+							type = new StringBuffer();
+							idx++;
+							state = 0;
 						} else {
-							inString = true;
+							state++;
 						}
+
+						inString = false;
 					} else {
-						if (inString) {
-							if (state == 1) {
-								lastRegion.append(buf[i]);
-							} else if (state == 3) {
-								type.append(buf[i]);
-							}
+						inString = true;
+					}
+				} else {
+					if (inString) {
+						if (state == 1) {
+							lastRegion.append((char)read);
+						} else if (state == 3) {
+							type.append((char)read);
 						}
 					}
 				}
