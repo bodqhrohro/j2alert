@@ -19,9 +19,22 @@ public class UkrZenApi {
 
 	UkrZenApi() {
 		readConfig();
+		initVectors();
 	}
 
 	private void readConfig() {
+	}
+
+	private void initVectors() {
+		cities = new Vector();
+		hromadas = new Vector();
+		oblasts = new Vector();
+		raions = new Vector();
+
+		cityIds = new Vector();
+		hromadaIds = new Vector();
+		oblastIds = new Vector();
+		raionIds = new Vector();
 	}
 
 	public void fetchRegions() throws IOException {
@@ -30,15 +43,7 @@ public class UkrZenApi {
 			InputStream is = hc.openInputStream();
 			Reader r = new InputStreamReader(is, "UTF-8");
 
-			cities = new Vector();
-			hromadas = new Vector();
-			oblasts = new Vector();
-			raions = new Vector();
-
-			cityIds = new Vector();
-			hromadaIds = new Vector();
-			oblastIds = new Vector();
-			raionIds = new Vector();
+			initVectors();
 
 			boolean inString = false;
 			int state = 0; // 0: title => 1: "title" => 2: type => 3: "type" => 0: ...

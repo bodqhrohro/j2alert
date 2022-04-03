@@ -3,7 +3,7 @@ import javax.microedition.lcdui.*;
 
 public class J2Alert extends MIDlet {
 	public void startApp() {
-		AlertScreen alert = new AlertScreen();
+		AlertScreen alert = new AlertScreen(this);
 		alert.start();
 		alert.setCommandListener(alert);
 		Display.getDisplay(this).setCurrent(alert);
