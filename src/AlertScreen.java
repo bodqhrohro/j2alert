@@ -22,7 +22,7 @@ public class AlertScreen extends Form implements CommandListener {
 
 			ticker.setString("");
 
-			this.append(new StringItem("Регіони завантажено", "Налаштуйте регіони, у яких знаходитесь, для отримання сповіщень"));
+			this.append(new StringItem("Регіони завантажено.\n", "Налаштуйте регіони, у яких знаходитесь, для отримання сповіщень"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			ticker.setString("Помилка запиту регіонів");
@@ -44,7 +44,7 @@ public class AlertScreen extends Form implements CommandListener {
 		this.addCommand(cmdSettings);
 		this.addCommand(cmdExit);
 
-		settingsScreen = new SettingsScreen(this.api);
+		settingsScreen = new SettingsScreen(this, this.api);
 		settingsScreen.setCommandListener(settingsScreen);
 
 		updateData();
@@ -52,24 +52,13 @@ public class AlertScreen extends Form implements CommandListener {
 		settingsScreen.start();
 	}
 
-	public void paint(Graphics g) {
+	public void switchTo(Form screen) {
+		Display.getDisplay(midlet).setCurrent(screen);
 	}
 
-	protected void keyPressed(int keyCode) {
-	}
-	protected void keyReleased(int keyCode) {
-	}
-	protected void keyRepeated(int keyCode) {
-	}
-	protected void pointerDragged(int x, int y) {
-	}
-	protected void pointerPressed(int x, int y) {
-	}
-	protected void pointerReleased(int x, int y) {
-	}
 	public void commandAction(Command command, Displayable displayable) {
 		if (command == cmdSettings) {
-			Display.getDisplay(midlet).setCurrent(settingsScreen);
+			switchTo(settingsScreen);
 		} else if (command == cmdExit) {
 			midlet.destroyApp(true);
 			midlet.notifyDestroyed();
