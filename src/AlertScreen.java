@@ -62,7 +62,7 @@ public class AlertScreen extends Form implements CommandListener {
 
 		settingsScreen.start();
 
-		activeUpdater = new ActiveUpdater(api);
+		activeUpdater = new ActiveUpdater(api, ticker, localStorage);
 		activeUpdater.start();
 	}
 
