@@ -1,5 +1,6 @@
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.lcdui.*;
+import javax.microedition.rms.*;
 import java.util.Vector;
 import java.io.*;
 
@@ -23,7 +24,7 @@ public class AlertScreen extends Form implements CommandListener {
 
 			ticker.setString("");
 
-			this.append(new StringItem("Регіони завантажено.\n", "Налаштуйте регіони, у яких знаходитесь, для отримання сповіщень"));
+			this.append(new StringItem("Регіони завантажено.\n", ""));
 		} catch (IOException e) {
 			e.printStackTrace();
 			ticker.setString("Помилка запиту регіонів");
@@ -46,7 +47,14 @@ public class AlertScreen extends Form implements CommandListener {
 		this.addCommand(cmdSettings);
 		this.addCommand(cmdExit);
 
-		settingsScreen = new SettingsScreen(this, this.api, this.localStorage);
+		int[] selectedRegions = {-1,-1,-1,-1};
+		try {
+			selectedRegions = localStorage.loadRegions();
+		} catch (RecordStoreException e) {
+			this.append("Збережених налаштувань не знайдено. Налаштуйте регіони, у яких знаходитесь, для отримання сповіщень.");
+		}
+
+		settingsScreen = new SettingsScreen(this, api, localStorage, selectedRegions);
 		settingsScreen.setCommandListener(settingsScreen);
 
 		updateData();
