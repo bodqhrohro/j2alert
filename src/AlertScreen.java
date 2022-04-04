@@ -9,6 +9,7 @@ public class AlertScreen extends Form implements CommandListener {
 
 	private UkrZenApi api;
 	private LocalStorage localStorage;
+	private ActiveUpdater activeUpdater;
 
 	private Command cmdSettings;
 	private Command cmdExit;
@@ -60,6 +61,9 @@ public class AlertScreen extends Form implements CommandListener {
 		updateData();
 
 		settingsScreen.start();
+
+		activeUpdater = new ActiveUpdater(api);
+		activeUpdater.start();
 	}
 
 	public void switchTo(Form screen) {
