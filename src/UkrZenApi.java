@@ -3,8 +3,8 @@ import java.io.*;
 import java.util.Vector;
 
 public class UkrZenApi {
-	private static final String LOCATIONS_URI = "http://nedoschechko.undo.it:11113/locations.json";
-	private static final String ACTIVE_URI = "http://nedoschechko.undo.it:11113/active.mp";
+	private static final String LOCATIONS_URI = "http://j2alert.mooo.com/api/locations.json";
+	private static final String ACTIVE_URI = "http://j2alert.mooo.com/api/active.mp";
 	private static final int LIMIT = 128;
 
 	private Vector cities;
