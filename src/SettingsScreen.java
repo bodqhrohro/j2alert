@@ -6,15 +6,17 @@ import java.io.*;
 public class SettingsScreen extends Form implements CommandListener {
 	private Form parentForm;
 	private UkrZenApi api;
+	private LocalStorage localStorage;
 
 	private Command cmdOK;
 	private Command cmdBack;
 
-	public SettingsScreen(Form parentForm, UkrZenApi api) {
+	public SettingsScreen(Form parentForm, UkrZenApi api, LocalStorage localStorage) {
 		super("");
 
 		this.parentForm = parentForm;
 		this.api = api;
+		this.localStorage = localStorage;
 	}
 
 	public void start() {
@@ -84,39 +86,11 @@ public class SettingsScreen extends Form implements CommandListener {
 	public void commandAction(Command command, Displayable displayable) {
 		if (command == cmdOK) {
 			try {
-				RecordStore aStore = RecordStore.openRecordStore("J2Alert_subscriptions", true);
-
-				int[] indices = this.getSelectedIndices();
-				byte[] bytes = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-				for (int i = 0; i < 4; i++) {
-					int index = indices[i];
-					bytes[i*4] = (byte)((index >> 24) & 0xff);
-					bytes[i*4+1] = (byte)((index >> 16) & 0xff);
-					bytes[i*4+2] = (byte)((index >> 8) & 0xff);
-					bytes[i*4+3] = (byte)(index & 0xff);
-				}
-
-				if (aStore.getNumRecords() == 0) {
-					aStore.addRecord(bytes, 0, bytes.length);
-				} else {
-					aStore.setRecord(1, bytes, 0, bytes.length);
-				}
-
-				aStore.closeRecordStore();
+				localStorage.saveRegions(this.getSelectedIndices());
 
 				((AlertScreen)parentForm).switchTo(parentForm);
 			} catch (RecordStoreFullException e) {
 				this.setTicker(new Ticker("Сховище переповнене!"));
-			} catch (RecordStoreNotFoundException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (RecordStoreNotOpenException e) {
-				e.printStackTrace();
-			} catch (InvalidRecordIDException e) {
-				e.printStackTrace();
-			} catch (RecordStoreException e) {
-				e.printStackTrace();
 			}
 		} else if (command == cmdBack) {
 			((AlertScreen)parentForm).switchTo(parentForm);

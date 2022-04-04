@@ -7,6 +7,7 @@ public class AlertScreen extends Form implements CommandListener {
 	private Ticker ticker;
 
 	private UkrZenApi api;
+	private LocalStorage localStorage;
 
 	private Command cmdSettings;
 	private Command cmdExit;
@@ -33,6 +34,7 @@ public class AlertScreen extends Form implements CommandListener {
 		super("");
 		this.midlet = midlet;
 		api = new UkrZenApi();
+		localStorage = new LocalStorage();
 	}
 
 	public void start() {
@@ -44,7 +46,7 @@ public class AlertScreen extends Form implements CommandListener {
 		this.addCommand(cmdSettings);
 		this.addCommand(cmdExit);
 
-		settingsScreen = new SettingsScreen(this, this.api);
+		settingsScreen = new SettingsScreen(this, this.api, this.localStorage);
 		settingsScreen.setCommandListener(settingsScreen);
 
 		updateData();
