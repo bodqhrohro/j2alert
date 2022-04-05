@@ -20,6 +20,11 @@
 			<fileset dir="${basedir}" includes="MANIFEST.MF"/>
 		</copy>
 
+		<mkdir dir="${build.classes}/res"/>
+		<copy todir="${build.classes}/res">
+			<fileset dir="${basedir}/res" includes="**/*.png"/>
+		</copy>
+
 		<zip destfile="${build}/${name}-nonpreverified.jar" basedir="${build.classes}"/>
 		<proguard>
 			-injars ${build}/${name}-nonpreverified.jar
