@@ -28,7 +28,6 @@
 			-dontshrink
 			-dontoptimize
 			-dontobfuscate
-			-dontwarn
 			-microedition
 			-outjars ${build}/${name}.jar
 		</proguard>

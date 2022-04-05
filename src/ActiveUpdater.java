@@ -7,11 +7,13 @@ public class ActiveUpdater extends Thread {
 	UkrZenApi api;
 	Ticker ticker;
 	LocalStorage localStorage;
+	SirenThread sirenThread;
 
-	ActiveUpdater(UkrZenApi api, Ticker ticker, LocalStorage localStorage) {
+	ActiveUpdater(UkrZenApi api, Ticker ticker, LocalStorage localStorage, SirenThread sirenThread) {
 		this.api = api;
 		this.ticker = ticker;
 		this.localStorage = localStorage;
+		this.sirenThread = sirenThread;
 	}
 
 	public void run() {
@@ -44,13 +46,17 @@ public class ActiveUpdater extends Thread {
 
 				if (isError) {
 					ticker.setString("Мережева помилка");
+					sirenThread.setState(SirenThread.STATE_ERROR);
 				} else if (isAlert) {
 					ticker.setString("Повітряна тривога!");
+					sirenThread.setState(SirenThread.STATE_SIREN);
 				} else {
 					ticker.setString("");
+					sirenThread.setState(SirenThread.STATE_SILENT);
 				}
 			} catch (RecordStoreException e) {
 				ticker.setString("Помилка RMS");
+				sirenThread.setState(SirenThread.STATE_ERROR);
 			}
 
 			try {

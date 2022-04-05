@@ -10,6 +10,7 @@ public class AlertScreen extends Form implements CommandListener {
 	private UkrZenApi api;
 	private LocalStorage localStorage;
 	private ActiveUpdater activeUpdater;
+	private SirenThread sirenThread;
 
 	private Command cmdSettings;
 	private Command cmdExit;
@@ -62,7 +63,10 @@ public class AlertScreen extends Form implements CommandListener {
 
 		settingsScreen.start();
 
-		activeUpdater = new ActiveUpdater(api, ticker, localStorage);
+		sirenThread = new SirenThread();
+		sirenThread.start();
+
+		activeUpdater = new ActiveUpdater(api, ticker, localStorage, sirenThread);
 		activeUpdater.start();
 	}
 
