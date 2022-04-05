@@ -34,6 +34,7 @@ public class SirenThread extends Thread {
 						Manager.playTone(100, 500, 100);
 					} else if (state == STATE_ERROR) {
 						Manager.playTone(100, 100, 100);
+						Thread.sleep(1000);
 					}
 				} catch (MediaException e) {
 					e.printStackTrace();
