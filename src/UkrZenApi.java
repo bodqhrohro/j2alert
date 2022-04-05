@@ -170,10 +170,14 @@ public class UkrZenApi {
 					} else if (numByte >= 0xa0 && numByte < 0xc0) {
 						// some fixstr: skip
 						reliablySkipBytes(dis, numByte & 0x1f);
-					} else if (numByte == 0xda) {
-						// some str16: skip
-						int str16length = dis.readUnsignedShort();
-						reliablySkipBytes(dis, str16length);
+					} else if (numByte == 0xd9 || numByte == 0xc4) {
+						// some 8-bit format: skip
+						int bytes8length = dis.readUnsignedByte();
+						reliablySkipBytes(dis, bytes8length);
+					} else if (numByte == 0xda || numByte == 0xc5) {
+						// some 16-bit format: skip
+						int bytes16length = dis.readUnsignedShort();
+						reliablySkipBytes(dis, bytes16length);
 					} else {
 						// wut's that?
 						continue;
