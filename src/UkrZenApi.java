@@ -99,7 +99,7 @@ public class UkrZenApi {
 				}
 			}
 
-			is.close();
+			hc.close();
 		} catch (IOException e) {
 			throw e;
 		}
@@ -176,7 +176,7 @@ public class UkrZenApi {
 				}
 			}
 
-			dis.close();
+			hc.close();
 		} catch (IOException e) {
 			throw e;
 		}
