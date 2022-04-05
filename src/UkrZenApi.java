@@ -167,6 +167,13 @@ public class UkrZenApi {
 						regionIndex = dis.readUnsignedByte();
 					} else if (numByte == 0xcd) {
 						regionIndex = dis.readUnsignedShort();
+					} else if (numByte >= 0xa0 && numByte < 0xc0) {
+						// some fixstr: skip
+						reliablySkipBytes(dis, numByte & 0x1f);
+					} else if (numByte == 0xda) {
+						// some str16: skip
+						int str16length = dis.readUnsignedShort();
+						reliablySkipBytes(dis, str16length);
 					} else {
 						// wut's that?
 						continue;
