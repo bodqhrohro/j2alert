@@ -15,10 +15,10 @@ public class LocalStorage {
 			if (bytes != null) {
 				for (int i = 0; i < 4; i++) {
 					indices[i] =
-						((int)bytes[i*4] << 24) |
-						((int)bytes[i*4+1] << 16) |
-						((int)bytes[i*4+2] << 8) |
-						((int)bytes[i*4+3]);
+						((bytes[i*4] & 0xff) << 24) |
+						((bytes[i*4+1] & 0xff) << 16) |
+						((bytes[i*4+2] & 0xff) << 8) |
+						((bytes[i*4+3] & 0xff));
 				}
 			}
 
