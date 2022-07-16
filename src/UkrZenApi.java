@@ -137,6 +137,7 @@ public class UkrZenApi {
 				if (objectLength >= 0x80 && objectLength < 0x90) {
 					objectLength = objectLength & 0x0f;
 				} else {
+					System.out.println("ol" + Integer.toString(objectLength));
 					throw new IOException();
 				}
 
@@ -145,12 +146,14 @@ public class UkrZenApi {
 					if (stringLength >= 0xa0 && stringLength < 0xb0) {
 						stringLength = stringLength & 0x0f;
 					} else {
+						System.out.println("sl" + Integer.toString(stringLength));
 						throw new IOException();
 					}
 
 					// completely skip "u" and "s"
 					if (j < 2) {
 						if (stringLength != 1) {
+							System.out.println("j" + Integer.toString(stringLength));
 							throw new IOException();
 						}
 						reliablySkipBytes(dis, 6);
@@ -163,23 +166,33 @@ public class UkrZenApi {
 					int regionIndex = 0;
 					if (numByte < 0x80) {
 						regionIndex = numByte;
+					} else if (numByte == 0xc0) {
+						// null: skip
 					} else if (numByte == 0xcc) {
 						regionIndex = dis.readUnsignedByte();
 					} else if (numByte == 0xcd) {
 						regionIndex = dis.readUnsignedShort();
+					} else if (numByte == 0xce) {
+						// some 32-bit uint: skip
+						reliablySkipBytes(dis, 4);
+						continue;
 					} else if (numByte >= 0xa0 && numByte < 0xc0) {
 						// some fixstr: skip
 						reliablySkipBytes(dis, numByte & 0x1f);
+						continue;
 					} else if (numByte == 0xd9 || numByte == 0xc4) {
 						// some 8-bit format: skip
 						int bytes8length = dis.readUnsignedByte();
 						reliablySkipBytes(dis, bytes8length);
+						continue;
 					} else if (numByte == 0xda || numByte == 0xc5) {
 						// some 16-bit format: skip
 						int bytes16length = dis.readUnsignedShort();
 						reliablySkipBytes(dis, bytes16length);
+						continue;
 					} else {
 						// wut's that?
+						System.out.println("wut" + Integer.toString(numByte));
 						continue;
 					}
 

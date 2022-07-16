@@ -3,8 +3,8 @@ MIDlet-1: J2Alert, , J2Alert
 MIDlet-Vendor: bodqhrohro
 MIDlet-Icon: /res/icon.png
 MIDlet-Name: J2Alert
-MIDlet-Version: 1.1.1
+MIDlet-Version: 1.1.2
 MicroEdition-Configuration: CLDC-1.1
 MicroEdition-Profile: MIDP-2.0
 MIDlet-Jar-URL: http://j2alert.mooo.com/dl/j2alert.jar
-MIDlet-Jar-Size: 10594
+MIDlet-Jar-Size: 10791
