@@ -160,7 +160,8 @@ public class UkrZenApi {
 						continue;
 					}
 
-					reliablySkipBytes(dis, stringLength);
+					byte firstChar = dis.readByte();
+					reliablySkipBytes(dis, stringLength - 1);
 
 					int numByte = dis.readUnsignedByte();
 					int regionIndex = 0;
@@ -196,7 +197,10 @@ public class UkrZenApi {
 						continue;
 					}
 
-					activeRegions.addElement(new Integer(regionIndex));
+					// use "ni", skip "i" and "luid"
+					if (stringLength == 2 && firstChar == 110) {
+						activeRegions.addElement(new Integer(regionIndex));
+					}
 				}
 			}
 
