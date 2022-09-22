@@ -3,6 +3,6 @@ MIDlet-1: J2Alert, , J2Alert
 MIDlet-Vendor: bodqhrohro
 MIDlet-Icon: /res/icon.png
 MIDlet-Name: J2Alert
-MIDlet-Version: 1.2.1
+MIDlet-Version: 1.3.0
 MicroEdition-Configuration: CLDC-1.1
 MicroEdition-Profile: MIDP-2.0

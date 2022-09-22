@@ -63,7 +63,7 @@ public class AlertScreen extends Form implements CommandListener {
 
 		settingsScreen.start();
 
-		sirenThread = new SirenThread();
+		sirenThread = new SirenThread(Display.getDisplay(midlet));
 		sirenThread.start();
 
 		activeUpdater = new ActiveUpdater(api, ticker, localStorage, sirenThread, this);

@@ -23,6 +23,7 @@
 		<mkdir dir="${build.classes}/res"/>
 		<copy todir="${build.classes}/res">
 			<fileset dir="${basedir}/res" includes="**/*.png"/>
+			<fileset dir="${basedir}/res" includes="**/*.mid"/>
 		</copy>
 
 		<zip destfile="${build}/${name}-nonpreverified.jar" basedir="${build.classes}"/>
